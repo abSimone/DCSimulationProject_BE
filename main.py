@@ -5,6 +5,8 @@ from pickletools import string1
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sqlalchemy import Integer
+from mysqlconn import Mysql_utility
+import uuid
 
 app = FastAPI()
 
@@ -13,6 +15,7 @@ class Ingredient(BaseModel):
     id: Integer
 
 class Pizza(BaseModel):
+    guid: uuid
     name: str
     price: float
     ingredients: Ingredient
@@ -21,8 +24,21 @@ class Pizza(BaseModel):
 @app.get("/pizza")
 async def getPizza():
     #GetPizza
-    return 1
+    factory = Mysql_utility('localhost','pizzeria_db','root','Andrea.99')
+    connection = factory.open_connection()
 
+    queryGet = 'select pizze.nome from pizze'
+    queryRes = connection.query(queryGet).fetchall()
+
+    factory.close_connection()
+    return queryRes
+
+@app.post("/pizza/create")
+async def createPizza(pizza_id, pizza: Pizza = None):
+    #CreazionePizza
+    idPizza = uuid.uuid4()
+    Mysql_utility.open_connection
+    
 @app.patch("/pizza/{pizza_id}/update")
 async def updatePizza(pizza_id, pizza: Pizza = None):
     #AggiornamentoPizza
