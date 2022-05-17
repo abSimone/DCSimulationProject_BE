@@ -17,4 +17,3 @@ create table pizza_ingrediente (
 );
 
 commit;
-
