@@ -2,7 +2,8 @@ from array import ArrayType
 from multiprocessing.dummy import Array
 from pickletools import string1
 from click import UUID
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from db_utilities.singleton_db import DBConnection
 import uuid
@@ -28,6 +29,7 @@ async def getPizza():
     queryGet = 'select pizze.nome, pizze.costo from pizze' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
+
     return queryRes
 
 @app.get("/pizza/{pizza_id}")
@@ -38,7 +40,8 @@ async def getSomePizza(pizza_id):
     queryGet = f'select pizze.nome, pizze.costo from pizze where pizze.ID_pizza = {pizza_id}' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
-    return queryRes
+    json_compatible_item_data = jsonable_encoder(queryRes)
+    return JSONResponse(content=json_compatible_item_data)
 
 @app.get("/ingrediente/{pizza_id}")
 async def getIngredienti(pizza_id):
@@ -48,7 +51,8 @@ async def getIngredienti(pizza_id):
     queryGet = f'select i.nome from ingredienti as i inner join pizza_ingrediente as pi on i.ID_ingrediente = pi.FK_ingrediente inner join pizze as p on pi.FK_pizza = p.ID_pizza where ID_pizza = {pizza_id}'
     queryRes = db.query(queryGet).fetchall()
 
-    return queryRes
+    json_compatible_item_data = jsonable_encoder(queryRes)
+    return JSONResponse(content=json_compatible_item_data)
 
 @app.post("/pizza/create")
 async def createPizza(pizza_id, pizza: Pizza = None):
