@@ -1,10 +1,9 @@
 from array import ArrayType
-from ast import Str
 from multiprocessing.dummy import Array
 from pickletools import string1
+from click import UUID
 from fastapi import FastAPI
 from pydantic import BaseModel
-from sqlalchemy import Integer
 from mysqlconn import Mysql_utility
 import uuid
 
@@ -12,10 +11,10 @@ app = FastAPI()
 
 class Ingredient(BaseModel):
     name: str
-    id: Integer
+    id: int
 
 class Pizza(BaseModel):
-    guid: uuid
+    guid: str
     name: str
     price: float
     ingredients: Ingredient
