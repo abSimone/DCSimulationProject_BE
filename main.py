@@ -66,15 +66,27 @@ async def getSomePizza(pizza_id):
     #GetCertainPizza
     db = DBConnection()
 
-    queryGet = f'select pizze.nome, pizze.costo from pizze where pizze.ID_pizza = {pizza_id}' #aggiungere alias
+    query = f'select i.ID_ingrediente ,i.nome from pizze p,ingredienti i, pizza_ingrediente pi where i.ID_ingrediente = pi.FK_ingrediente and pi.FK_pizza = p.ID_pizza and p.ID_pizza = {pizza_id}'
+    queryIngr = db.query(query).fetchall()
+    
+    ingredienti = []
+    
+    for el in queryIngr:
+        ingredienti.append(
+            {'id': el[0],
+            'nome': el[1]}
+        )
+
+    queryGet = f'select pizze.nome, pizze.costo, i.nome from pizze, ingredienti i where pizze.ID_pizza = {pizza_id}' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
     res = {
         "data":{
             "nome" : queryRes[0][0],
             "costo" : queryRes[0][1],
+            "ingredienti" : ingredienti
         }
     }
-
+    
     return JSONResponse(res)
 
 @app.get("/ingrediente/{pizza_id}")
