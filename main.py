@@ -8,9 +8,20 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from db_utilities.singleton_db import DBConnection
+from fastapi.middleware.cors import CORSMiddleware
 import uuid
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Ingredient(BaseModel):
     name: str
@@ -40,11 +51,15 @@ async def getPizza():
     queryGet = 'select * from pizze' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
-    toReturnDict = create_dict()
+    res = []
     for row in queryRes:
-        toReturnDict.add(row[0], {"id_pizza":row[0], "nome":row[1], "costo":row[2]})
+        toReturnDict = create_dict()
+        toReturnDict.add("id_pizza",row[0])
+        toReturnDict.add("nome",row[1])
+        toReturnDict.add("costo",row[2])
+        res.append(toReturnDict)
 
-    return JSONResponse(toReturnDict)
+    return JSONResponse({"data" : res})
 
 @app.get("/pizza/{pizza_id}")
 async def getSomePizza(pizza_id):
@@ -53,9 +68,14 @@ async def getSomePizza(pizza_id):
 
     queryGet = f'select pizze.nome, pizze.costo from pizze where pizze.ID_pizza = {pizza_id}' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
+    res = {
+        "data":{
+            "nome" : queryRes[0][0],
+            "costo" : queryRes[0][1],
+        }
+    }
 
-    json_compatible_item_data = jsonable_encoder(queryRes)
-    return JSONResponse(content=json_compatible_item_data)
+    return JSONResponse(res)
 
 @app.get("/ingrediente/{pizza_id}")
 async def getIngredienti(pizza_id):
