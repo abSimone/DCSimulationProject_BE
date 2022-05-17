@@ -40,7 +40,7 @@ async def getSomePizza(pizza_id):
 
     return queryRes
 
-@app.get("/pizza/{pizza_id}")
+@app.get("/ingrediente/{pizza_id}")
 async def getIngredienti(pizza_id):
     #GetPizzaIngredients
     db = DBConnection()
