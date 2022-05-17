@@ -2,7 +2,7 @@
     "mysql": {
         "host": "localhost",
         "user": "root",
-        "password": "Andrea.99",
-        "db": "pizzeria_db"
+        "password": "1234",
+        "db": "pizzeria"
     }
 }

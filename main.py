@@ -1,4 +1,5 @@
 from array import ArrayType
+import json
 from multiprocessing.dummy import Array
 from pickletools import string1
 from click import UUID
@@ -27,11 +28,12 @@ async def getPizza():
     #GetPizza
     db = DBConnection()
 
-    queryGet = 'select pizze.nome, pizze.costo from pizze' #aggiungere alias
+    queryGet = 'select * from pizze' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
     json_compatible_item_data = jsonable_encoder(queryRes)
-    return JSONResponse(content=json_compatible_item_data)
+    #return JSONResponse(content=json_compatible_item_data)
+    return json.dumps(queryRes)
 
 @app.get("/pizza/{pizza_id}")
 async def getSomePizza(pizza_id):
