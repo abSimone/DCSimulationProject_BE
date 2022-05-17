@@ -2,6 +2,7 @@ import mysql.connector as mysql
 from mysql.connector import Error
 
 class Mysql_utility:
+    connetion = None
 
     def __init__(self, host, database, user, password):
         self.host = host
@@ -63,4 +64,11 @@ class Mysql_utility:
         except Error as e:
             print('Error: ', e)
 
-
+    # def create(self):
+    #     try:
+    #         factory = Mysql_utility('localhost','pizzeria_db','root','Andrea.99')
+    #         connection = factory.open_connection()
+    #     except Error as e:
+    #         print('Error: ', e)
+    #     finally:
+    #         self.connection = connection
