@@ -25,17 +25,27 @@ async def getPizza():
     #GetPizza
     db = DBConnection()
 
-    queryGet = 'select pizze.nome, pizze.costo from pizze'
+    queryGet = 'select pizze.nome, pizze.costo from pizze' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
     return queryRes
 
 @app.get("/pizza/{pizza_id}")
-async def getPizza(pizza_id):
-    #GetPizza
+async def getSomePizza(pizza_id):
+    #GetCertainPizza
     db = DBConnection()
 
-    queryGet = f'select pizze.nome, pizze.costo from pizze where pizze.ID_pizza = {pizza_id}'
+    queryGet = f'select pizze.nome, pizze.costo from pizze where pizze.ID_pizza = {pizza_id}' #aggiungere alias
+    queryRes = db.query(queryGet).fetchall()
+
+    return queryRes
+
+@app.get("/pizza/{pizza_id}")
+async def getIngredienti(pizza_id):
+    #GetPizzaIngredients
+    db = DBConnection()
+
+    queryGet = f'select i.nome from ingredienti as i inner join pizza_ingrediente as pi on i.ID_ingrediente = pi.FK_ingrediente inner join pizze as p on pi.FK_pizza = p.ID_pizza where ID_pizza = {pizza_id}'
     queryRes = db.query(queryGet).fetchall()
 
     return queryRes
