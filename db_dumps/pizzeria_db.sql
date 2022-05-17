@@ -1,13 +1,13 @@
 /* Rimuovere gli auto_increment */
 
 create table pizze (
-    ID_pizza int primary key auto_increment,
+    ID_pizza int primary key,
     nome varchar(50),
     costo float(3,2)
 );
 
 create table ingredienti (
-    ID_ingrediente int primary key auto_increment,
+    ID_ingrediente int primary key,
     nome varchar(50)
 );
 
