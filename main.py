@@ -22,6 +22,15 @@ class Pizza(BaseModel):
     price: float
     ingredients: Ingredient
 
+class create_dict(dict): 
+  
+    # __init__ function 
+    def __init__(self): 
+        self = dict() 
+          
+    # Function to add key:value 
+    def add(self, key, value): 
+        self[key] = value
 
 @app.get("/pizza")
 async def getPizza():
@@ -31,9 +40,11 @@ async def getPizza():
     queryGet = 'select * from pizze' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
-    json_compatible_item_data = jsonable_encoder(queryRes)
-    #return JSONResponse(content=json_compatible_item_data)
-    return json.dumps(queryRes)
+    toReturnDict = create_dict()
+    for row in queryRes:
+        toReturnDict.add({"id_pizza":row[0], "nome":row[1], "costo":row[2]})
+
+    return json.dumps(toReturnDict)
 
 @app.get("/pizza/{pizza_id}")
 async def getSomePizza(pizza_id):
