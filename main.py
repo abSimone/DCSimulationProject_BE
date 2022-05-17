@@ -25,7 +25,7 @@ async def getPizza():
     #GetPizza
     db = DBConnection()
 
-    queryGet = 'select pizze.nome, pizze.costo from pizze'
+    queryGet = 'select * from pizze'
     queryRes = db.query(queryGet).fetchall()
 
     return queryRes
