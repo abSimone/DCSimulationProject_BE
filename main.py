@@ -89,8 +89,26 @@ async def getSomePizza(pizza_id):
     
     return JSONResponse(res)
 
+@app.get("/ingrediente")
+async def getIngredienti():
+    #getIngredients
+    db = DBConnection()
+
+    queryGet = 'select * from ingredienti'
+    queryRes = db.query(queryGet).fetchall()
+    
+    ingredienti = []
+    for tuple in queryRes:
+        ingredienti.append({"id": tuple[0], "nome": tuple[1]})
+
+    res = {
+        "data": ingredienti
+    }
+
+    return JSONResponse(res)
+
 @app.get("/ingrediente/{pizza_id}")
-async def getIngredienti(pizza_id):
+async def getIngredientiPizza(pizza_id):
     #GetPizzaIngredients
     db = DBConnection()
 
