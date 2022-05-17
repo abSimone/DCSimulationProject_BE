@@ -4,7 +4,7 @@ from pickletools import string1
 from click import UUID
 from fastapi import FastAPI
 from pydantic import BaseModel
-from mysqlconn import Mysql_utility
+from db_utilities.singleton_db import DBConnection
 import uuid
 
 app = FastAPI()
@@ -23,20 +23,29 @@ class Pizza(BaseModel):
 @app.get("/pizza")
 async def getPizza():
     #GetPizza
-    factory = Mysql_utility('localhost','pizzeria_db','root','Andrea.99')
-    connection = factory.open_connection()
+    db = DBConnection()
 
-    queryGet = 'select pizze.nome from pizze'
-    queryRes = connection.query(queryGet).fetchall()
+    queryGet = 'select pizze.nome, pizze.costo from pizze'
+    queryRes = db.query(queryGet).fetchall()
 
-    factory.close_connection()
+    return queryRes
+
+@app.get("/pizza/{pizza_id}")
+async def getPizza(pizza_id):
+    #GetPizza
+    db = DBConnection()
+
+    queryGet = f'select pizze.nome, pizze.costo from pizze where pizze.ID_pizza = {pizza_id}'
+    queryRes = db.query(queryGet).fetchall()
+
     return queryRes
 
 @app.post("/pizza/create")
 async def createPizza(pizza_id, pizza: Pizza = None):
     #CreazionePizza
-    idPizza = uuid.uuid4()
-    Mysql_utility.open_connection
+    #idPizza = uuid.uuid4()
+    #Mysql_utility.open_connection
+    return 1
     
 @app.patch("/pizza/{pizza_id}/update")
 async def updatePizza(pizza_id, pizza: Pizza = None):
