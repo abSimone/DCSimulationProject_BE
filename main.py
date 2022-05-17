@@ -4,6 +4,7 @@ from pickletools import string1
 from click import UUID
 from fastapi import FastAPI, Response
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from db_utilities.singleton_db import DBConnection
 import uuid
