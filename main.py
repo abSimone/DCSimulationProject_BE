@@ -30,8 +30,8 @@ async def getPizza():
     queryGet = 'select pizze.nome, pizze.costo from pizze' #aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
-
-    return queryRes
+    json_compatible_item_data = jsonable_encoder(queryRes)
+    return JSONResponse(content=json_compatible_item_data)
 
 @app.get("/pizza/{pizza_id}")
 async def getSomePizza(pizza_id):
