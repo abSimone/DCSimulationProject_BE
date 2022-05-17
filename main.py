@@ -26,7 +26,7 @@ async def getPizza():
     factory = Mysql_utility('localhost','pizzeria_db','root','Andrea.99')
     factory.open_connection()
 
-    queryGet = 'select pizze.nome from pizze'
+    queryGet = 'select * from pizze'
     queryRes = factory.query(queryGet).fetchall()
 
     factory.close_connection()
