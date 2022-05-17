@@ -42,9 +42,9 @@ async def getPizza():
 
     toReturnDict = create_dict()
     for row in queryRes:
-        toReturnDict.add({"id_pizza":row[0], "nome":row[1], "costo":row[2]})
+        toReturnDict.add(row[0], {"id_pizza":row[0], "nome":row[1], "costo":row[2]})
 
-    return json.dumps(toReturnDict)
+    return JSONResponse(toReturnDict)
 
 @app.get("/pizza/{pizza_id}")
 async def getSomePizza(pizza_id):
