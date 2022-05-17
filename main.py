@@ -24,10 +24,10 @@ class Pizza(BaseModel):
 async def getPizza():
     #GetPizza
     factory = Mysql_utility('localhost','pizzeria_db','root','Andrea.99')
-    connection = factory.open_connection()
+    factory.open_connection()
 
     queryGet = 'select pizze.nome from pizze'
-    queryRes = connection.query(queryGet).fetchall()
+    queryRes = factory.query(queryGet).fetchall()
 
     factory.close_connection()
     return queryRes
