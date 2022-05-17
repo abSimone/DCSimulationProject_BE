@@ -1,5 +1,3 @@
-/* Rimuovere gli auto_increment */
-
 create table pizze (
     ID_pizza int primary key,
     nome varchar(50),
