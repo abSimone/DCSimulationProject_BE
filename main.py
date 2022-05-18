@@ -150,9 +150,25 @@ async def createPizza(pizza: Pizza):
 
 @app.patch("/pizza/{pizza_id}/update")
 async def updatePizza(pizza_id, pizza: Pizza = None):
-    # AggiornamentoPizza
-    return 1
+    db = DBConnection()
+    queryUpdate = f'update pizze set nome = "{pizza.nome}", costo = {pizza.costo} where id_pizza = {pizza_id}'
+    db.query(queryUpdate).fetchall()
+    db.commit()
+    getRelazione = f'select fk_ingrediente from pizza_ingrediente where fk_pizza = {pizza_id}'
+    print(db.query(getRelazione).fetchall())
+    queryDelete = f'delete from pizza_ingrediente where FK_pizza = {pizza_id}'
+    db.query(queryDelete)
+    db.commit()
+    relazionaPizzaIngredienti = f'insert into pizza_ingrediente values'
+    for i in pizza.ingredienti:
+        relazionaPizzaIngredienti += f'({pizza_id}, {i.id}),'
+    relazionaPizzaIngredienti = relazionaPizzaIngredienti[0: len(
+        relazionaPizzaIngredienti)-1]
 
+    db.query(relazionaPizzaIngredienti).fetchall()
+    db.commit()
+
+    return 1
 
 @app.delete("/pizza/{pizza_id}/delete")
 async def deletePizza(pizza_id):
