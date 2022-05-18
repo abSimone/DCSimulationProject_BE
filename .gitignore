@@ -1,1 +1,3 @@
 db_utilities/config.json
+*.pyc
+db_utilities/config.json
