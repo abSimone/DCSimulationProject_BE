@@ -24,9 +24,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class Ingrediente(BaseModel):
     nome: str
     id: int
+
 
 class Pizza(BaseModel):
     nome: str
@@ -34,70 +36,74 @@ class Pizza(BaseModel):
     ingredienti: List[Ingrediente]
 
 
-class create_dict(dict): 
-  
-    # __init__ function 
-    def __init__(self): 
-        self = dict() 
-          
-    # Function to add key:value 
-    def add(self, key, value): 
+class create_dict(dict):
+
+    # __init__ function
+    def __init__(self):
+        self = dict()
+
+    # Function to add key:value
+    def add(self, key, value):
         self[key] = value
+
 
 @app.get("/pizza")
 async def getPizza():
-    #GetPizza
+    # GetPizza
     db = DBConnection()
 
-    queryGet = 'select * from pizze' #aggiungere alias
+    queryGet = 'select * from pizze'  # aggiungere alias
     queryRes = db.query(queryGet).fetchall()
 
     res = []
     for row in queryRes:
         toReturnDict = create_dict()
-        toReturnDict.add("id_pizza",row[0])
-        toReturnDict.add("nome",row[1])
-        toReturnDict.add("costo",row[2])
+        toReturnDict.add("id_pizza", row[0])
+        toReturnDict.add("nome", row[1])
+        toReturnDict.add("costo", row[2])
         res.append(toReturnDict)
 
-    return JSONResponse({"data" : res})
+    return JSONResponse({"data": res})
+
 
 @app.get("/pizza/{pizza_id}")
 async def getSomePizza(pizza_id):
-    #GetCertainPizza
+    # GetCertainPizza
     db = DBConnection()
 
     query = f'select i.ID_ingrediente ,i.nome from pizze p,ingredienti i, pizza_ingrediente pi where i.ID_ingrediente = pi.FK_ingrediente and pi.FK_pizza = p.ID_pizza and p.ID_pizza = {pizza_id}'
     queryIngr = db.query(query).fetchall()
-    
+
     ingredienti = []
-    
+
     for el in queryIngr:
         ingredienti.append(
             {'id': el[0],
-            'nome': el[1]}
+             'nome': el[1]}
         )
 
-    queryGet = f'select pizze.nome, pizze.costo, i.nome from pizze, ingredienti i where pizze.ID_pizza = {pizza_id}' #aggiungere alias
+    # aggiungere alias
+    queryGet = f'select pizze.nome, pizze.costo, i.nome from pizze, ingredienti i where pizze.ID_pizza = {pizza_id}'
     queryRes = db.query(queryGet).fetchall()
     res = {
-        "data":{
-            "nome" : queryRes[0][0],
-            "costo" : queryRes[0][1],
-            "ingredienti" : ingredienti
+        "data": {
+            "nome": queryRes[0][0],
+            "costo": queryRes[0][1],
+            "ingredienti": ingredienti
         }
     }
-    
+
     return JSONResponse(res)
+
 
 @app.get("/ingrediente")
 async def getIngredienti():
-    #getIngredients
+    # getIngredients
     db = DBConnection()
 
     queryGet = 'select * from ingredienti'
     queryRes = db.query(queryGet).fetchall()
-    
+
     ingredienti = []
     for tuple in queryRes:
         ingredienti.append({"id": tuple[0], "nome": tuple[1]})
@@ -108,9 +114,10 @@ async def getIngredienti():
 
     return JSONResponse(res)
 
+
 @app.get("/ingrediente/{pizza_id}")
 async def getIngredientiPizza(pizza_id):
-    #GetPizzaIngredients
+    # GetPizzaIngredients
     db = DBConnection()
 
     queryGet = f'select i.nome from ingredienti as i inner join pizza_ingrediente as pi on i.ID_ingrediente = pi.FK_ingrediente inner join pizze as p on pi.FK_pizza = p.ID_pizza where ID_pizza = {pizza_id}'
@@ -119,8 +126,9 @@ async def getIngredientiPizza(pizza_id):
     json_compatible_item_data = jsonable_encoder(queryRes)
     return JSONResponse(content=json_compatible_item_data)
 
+
 @app.post("/pizza/aggiungi")
-async def createPizza(pizza : Pizza):
+async def createPizza(pizza: Pizza):
     db = DBConnection()
     queryPost = f'insert into pizze(nome, costo) values("{pizza.nome}", {pizza.costo})'
     db.query(queryPost)
@@ -130,18 +138,19 @@ async def createPizza(pizza : Pizza):
     relazionaPizzaIngredienti = f'insert into pizza_ingrediente values'
     for i in pizza.ingredienti:
         relazionaPizzaIngredienti += f'({nuovaPizzaId[0]}, {i.id}),'
-    
-    relazionaPizzaIngredienti = relazionaPizzaIngredienti[0 : len(relazionaPizzaIngredienti)-1]
-    
+
+    relazionaPizzaIngredienti = relazionaPizzaIngredienti[0: len(
+        relazionaPizzaIngredienti)-1]
+
     db.query(relazionaPizzaIngredienti).fetchall()
     db.commit()
-    
+
     return 1
-    
-    
+
+
 @app.patch("/pizza/{pizza_id}/update")
 async def updatePizza(pizza_id, pizza: Pizza = None):
-    #AggiornamentoPizza
+    # AggiornamentoPizza
     return 1
 
 
@@ -149,7 +158,10 @@ async def updatePizza(pizza_id, pizza: Pizza = None):
 async def deletePizza(pizza_id):
 
     db = DBConnection()
-
-    queryDelete = f''
-    db.query(queryDelete)
+    delete = f'delete from pizza_ingrediente where fk_pizza={pizza_id}'
+    db.query(delete)
+    db.commit()
+    delete = f'delete from pizze where id_pizza={pizza_id}'
+    db.query(delete)
+    db.commit()
     return 1
