@@ -2,6 +2,7 @@ from array import ArrayType
 import json
 from multiprocessing.dummy import Array
 from pickletools import string1
+from typing import List
 from click import UUID
 from fastapi import FastAPI, Response
 from fastapi.responses import JSONResponse
@@ -23,15 +24,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class Ingredient(BaseModel):
-    name: str
+class Ingrediente(BaseModel):
+    nome: str
     id: int
 
 class Pizza(BaseModel):
-    guid: str
-    name: str
-    price: float
-    ingredients: Ingredient
+    nome: str
+    costo: float
+    ingredienti: List[Ingrediente]
+
 
 class create_dict(dict): 
   
@@ -118,14 +119,37 @@ async def getIngredientiPizza(pizza_id):
     json_compatible_item_data = jsonable_encoder(queryRes)
     return JSONResponse(content=json_compatible_item_data)
 
-@app.post("/pizza/create")
-async def createPizza(pizza_id, pizza: Pizza = None):
-    #CreazionePizza
-    #idPizza = uuid.uuid4()
-    #Mysql_utility.open_connection
+@app.post("/pizza/aggiungi")
+async def createPizza(pizza : Pizza):
+    db = DBConnection()
+    queryPost = f'insert into pizze(nome, costo) values("{pizza.nome}", {pizza.costo})'
+    db.query(queryPost)
+    db.commit()
+    queryGet = f'select id_pizza from pizze where nome = "{pizza.nome}"'
+    nuovaPizzaId = db.query(queryGet).fetchone()
+    relazionaPizzaIngredienti = f'insert into pizza_ingrediente values'
+    for i in pizza.ingredienti:
+        relazionaPizzaIngredienti += f'({nuovaPizzaId[0]}, {i.id}),'
+    
+    relazionaPizzaIngredienti = relazionaPizzaIngredienti[0 : len(relazionaPizzaIngredienti)-1]
+    
+    db.query(relazionaPizzaIngredienti).fetchall()
+    db.commit()
+    
     return 1
+    
     
 @app.patch("/pizza/{pizza_id}/update")
 async def updatePizza(pizza_id, pizza: Pizza = None):
     #AggiornamentoPizza
+    return 1
+
+
+@app.delete("/pizza/{pizza_id}/delete")
+async def deletePizza(pizza_id):
+
+    db = DBConnection()
+
+    queryDelete = f''
+    db.query(queryDelete)
     return 1
