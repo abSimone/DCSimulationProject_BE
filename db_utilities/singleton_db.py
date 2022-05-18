@@ -26,6 +26,9 @@ class DBConnection:
             self.cursor.execute(query)
             return self.cursor
     
+    def commit(self):
+        self.con.commit()
+    
 
     def __del__(self):
         if DBConnection.con is not None:
