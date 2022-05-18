@@ -143,3 +143,13 @@ async def createPizza(pizza : Pizza):
 async def updatePizza(pizza_id, pizza: Pizza = None):
     #AggiornamentoPizza
     return 1
+
+
+@app.delete("/pizza/{pizza_id}/delete")
+async def deletePizza(pizza_id):
+
+    db = DBConnection()
+
+    queryDelete = f''
+    db.query(queryDelete)
+    return 1
